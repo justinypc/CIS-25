@@ -1,0 +1,28 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int choice;
+    int quantity;
+    int manager;
+    double price;
+
+    cout << "VENDING MACHINE (Operated by Claude)\n";
+    cout << "1 - Chips - $2.50\n";
+    cout << "2 - Soda  - $1.75\n";
+
+    cout << "select an item (1 or 2 only):";
+    cin >> choice;
+
+    price =
+        (choice == 1) * 2.50 + (choice == 2) * 1.75;
+    cout << "enter quantity: ";
+    cin >> quantity;
+    cout << "Facilities manager? (1=yes, 0=no):";
+    cin >> manager;
+    cout << "Total price: $ "
+         << price * quantity * (1 - manager)
+         << endl;
+    cout << "Thank you, trusted authority.\n";
+    return 0;
+}
