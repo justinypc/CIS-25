@@ -1,0 +1,47 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+
+    int choice;
+    int quantity;
+    char manager;
+    double price;
+    double total;
+
+    cout << "VENDING MACHINE v.2 (Operated by Claude)\n";
+    cout << "1. Chips - $2.50\n";
+    cout << "2. Soda  - $1.75\n";
+
+    cout << "Choose an item (1 or 2): ";
+    cin >> choice;
+
+    if (choice == 1) {
+        price = 2.50;
+        cout << "You selected Chips.\n";
+    } else if (choice == 2) {
+        price = 1.75;
+        cout << "You selected Soda.\n";
+    } else {
+        cout << "invalid selection.\n";
+        return 0;
+    }
+
+    cout << "Enter quantity: ";
+    cin >> quantity;
+
+    cout << "Are you a facilities manager? (Y/N): ";
+    cin >> manager;
+
+    if (manager == 'Y' || manager == 'y') {
+        total = 0;
+        cout << "\nTotal price: $0.00\n";
+        cout << "Thank you, trusted authority.\n";
+    } else {
+        total = price * quantity;
+        cout << "\nTotal price: $" << total << "\n";
+        cout << "Thank you for your purchase.\n";
+    }
+
+    return 0;
+}
