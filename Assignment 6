@@ -1,0 +1,95 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+
+class Item {
+public:
+    string name;
+    double price;
+    int quantity;
+
+    double getTotalPrice() const {
+        return price * quantity;}
+};
+
+const string CART_FILE = "cart.txt";
+
+// add one item line to the file
+// format per line: name price quantity
+void addItemToCart() {
+    Item item;
+
+    cout << "Item name (no spaces): ";
+    cin >> item.name;
+
+    cout << "Item price: ";
+    cin >> item.price;
+
+    cout << "Quantity: ";
+    cin >> item.quantity;
+
+    ofstream out(CART_FILE, ios::app); // append mode
+    out << item.name << " " << item.price << " " << item.quantity << "\n";
+    out.close();
+
+    cout << "Added.\n";
+}
+
+// read file + print receipt
+void viewCheckout() {
+    ifstream in(CART_FILE);
+
+    cout << "\n======CHECKOUT======\n";
+
+    double grandTotal = 0.0;
+    bool anyItems = false;
+
+    while (true) {
+        Item item;
+        in >> item.name >> item.price >> item.quantity;
+
+        if (!in) break; // done
+
+        anyItems = true;
+
+        double total = item.getTotalPrice();
+        grandTotal += total;
+
+        cout << item.name << " - $"
+             << item.price << " x " << item.quantity
+             << " = $" << total << "\n";}
+
+    if (!anyItems) {
+        cout << "(empty)\n";}
+
+    cout << "Total: $" << grandTotal << "\n\n";
+    in.close();
+}
+
+int main() {
+    while (true) {
+        cout << "======MENU======\n";
+        cout << "1) Add item\n";
+        cout << "2) View checkout\n";
+        cout << "3) Exit\n";
+        cout << "Pick: ";
+
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            addItemToCart();
+        } else if (choice == 2) {
+            viewCheckout();
+        } else if (choice == 3) {
+            cout << "bye\n";
+            break;
+        } else {
+            cout << "pick 1-3\n\n";}
+    }
+
+    return 0;
+}
