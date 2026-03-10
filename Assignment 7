@@ -1,0 +1,149 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// class for 1 row
+class Model {
+public:
+    int rank;
+    string modelName;
+    string organization;
+    string country;
+    int releaseYear;
+    string modality;
+    bool openSource;
+    double mmlu;
+    double humaneval;
+    string bestFor;
+
+    // ctor
+    Model() {
+        rank = 0;
+        modelName = "";
+        organization = "";
+        country = "";
+        releaseYear = 0;
+        modality = "";
+        openSource = false;
+        mmlu = 0.0;
+        humaneval = 0.0;
+        bestFor = "";
+    }
+
+    // print row info
+    void display() {
+        cout << "Rank: " << rank << endl;
+        cout << "Model: " << modelName << endl;
+        cout << "Org: " << organization << endl;
+        cout << "Country: " << country << endl;
+        cout << "Year: " << releaseYear << endl;
+        cout << "Modality: " << modality << endl;
+        cout << "Open Src: " << (openSource ? "True" : "False") << endl;
+        cout << "MMLU: " << mmlu << endl;
+        cout << "HumanEval: " << humaneval << endl;
+        cout << "Best For: " << bestFor << endl;
+        cout << "------------------------" << endl;
+    }
+};
+
+// split csv line
+vector<string> splitCSV(string line) {
+    vector<string> parts;
+    string current = "";
+    bool inQuotes = false;
+
+    for (int i = 0; i < line.length(); i++) {
+        char ch = line[i];
+
+        if (ch == '"') {
+            inQuotes = !inQuotes;
+        }
+        else if (ch == ',' && !inQuotes) {
+            parts.push_back(current);
+            current = "";
+        }
+        else {
+            current += ch;
+        }
+    }
+
+    // last part
+    parts.push_back(current);
+    return parts;
+}
+
+// str -> int
+int toInt(string s) {
+    if (s == "") {
+        return 0;
+    }
+    return stoi(s);
+}
+
+// str -> double
+double toDouble(string s) {
+    if (s == "") {
+        return 0.0;
+    }
+    return stod(s);
+}
+
+// str -> bool
+bool toBool(string s) {
+    if (s == "True") {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    ifstream file("llm_models.csv"); // open file
+
+    if (!file.is_open()) {
+        cout << "file didnt open" << endl;
+        return 1;
+    }
+
+    vector<Model> models; // store rows
+    string line;
+
+    getline(file, line); // skip header
+
+    while (getline(file, line)) {
+        vector<string> row = splitCSV(line);
+
+        // make sure enough cols exist
+        if (row.size() >= 26) {
+            Model m;
+
+            // grab needed fields
+            m.rank = toInt(row[0]);
+            m.modelName = row[1];
+            m.organization = row[2];
+            m.country = row[3];
+            m.releaseYear = toInt(row[4]);
+            m.modality = row[8];
+            m.openSource = toBool(row[9]);
+            m.mmlu = toDouble(row[14]);
+            m.humaneval = toDouble(row[15]);
+            m.bestFor = row[24];
+
+            models.push_back(m); // saves row
+        }
+    }
+
+    file.close();  // closes file
+
+    cout << "rows loaded: " << models.size() << endl;
+    cout << endl;
+
+    // show 10 rows
+    for (int i = 0; i < models.size() && i < 10; i++) {
+        models[i].display();
+    }
+
+    return 0;
+}
