@@ -1,0 +1,295 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class Patient
+{
+public:
+    int id;
+    string name;
+    int age;
+    string gender;
+    string diagnosis;
+};
+
+const int MAX = 100;
+
+// sort ids
+void sortPatients(Patient* patients, int count)
+{
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = 0; j < count - 1 - i; j++)
+        {
+            if (patients[j].id > patients[j + 1].id)
+            {
+                Patient temp = patients[j];
+                patients[j] = patients[j + 1];
+                patients[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// find id
+int binarySearch(Patient* patients, int count, int target)
+{
+    int low = 0;
+    int high = count - 1;
+
+    while (low <= high)
+    {
+        int mid = (low + high) / 2;
+
+        if (patients[mid].id == target)
+        {
+            return mid;
+        }
+        else if (target > patients[mid].id)
+        {
+            low = mid + 1;
+        }
+        else
+        {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+// add one
+void addPatient(Patient* patients, int& count)
+{
+    if (count >= MAX)
+    {
+        cout << "Full.\n";
+        return;
+    }
+
+    cout << "Enter ID: ";
+    cin >> patients[count].id;
+
+    cout << "Enter name: ";
+    cin >> patients[count].name;
+
+    cout << "Enter age: ";
+    cin >> patients[count].age;
+
+    cout << "Enter gender: ";
+    cin >> patients[count].gender;
+
+    cout << "Enter diagnosis: ";
+    cin >> patients[count].diagnosis;
+
+    count++;
+
+    sortPatients(patients, count);
+
+    cout << "Added.\n";
+}
+
+// print everything
+void displayPatients(Patient* patients, int count)
+{
+    if (count == 0)
+    {
+        cout << "No patients.\n";
+        return;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        cout << "\nPatient " << i + 1 << endl;
+        cout << "ID: " << patients[i].id << endl;
+        cout << "Name: " << patients[i].name << endl;
+        cout << "Age: " << patients[i].age << endl;
+        cout << "Gender: " << patients[i].gender << endl;
+        cout << "Diagnosis: " << patients[i].diagnosis << endl;
+    }
+}
+
+// search one
+void searchPatient(Patient* patients, int count)
+{
+    if (count == 0)
+    {
+        cout << "No patients.\n";
+        return;
+    }
+
+    int id;
+    cout << "Enter ID to search: ";
+    cin >> id;
+
+    int index = binarySearch(patients, count, id);
+
+    if (index == -1)
+    {
+        cout << "Not found.\n";
+    }
+    else
+    {
+        cout << "\nFound\n";
+        cout << "ID: " << patients[index].id << endl;
+        cout << "Name: " << patients[index].name << endl;
+        cout << "Age: " << patients[index].age << endl;
+        cout << "Gender: " << patients[index].gender << endl;
+        cout << "Diagnosis: " << patients[index].diagnosis << endl;
+    }
+}
+
+// update one
+void updatePatient(Patient* patients, int count)
+{
+    if (count == 0)
+    {
+        cout << "No patients.\n";
+        return;
+    }
+
+    int id;
+    cout << "Enter ID to update: ";
+    cin >> id;
+
+    int index = binarySearch(patients, count, id);
+
+    if (index == -1)
+    {
+        cout << "Not found.\n";
+    }
+    else
+    {
+        cout << "New name: ";
+        cin >> patients[index].name;
+
+        cout << "New age: ";
+        cin >> patients[index].age;
+
+        cout << "New gender: ";
+        cin >> patients[index].gender;
+
+        cout << "New diagnosis: ";
+        cin >> patients[index].diagnosis;
+
+        cout << "Updated.\n";
+    }
+}
+
+// save file
+void savePatientsToFile(Patient* patients, int count)
+{
+    ofstream outFile("patients.txt");
+
+    if (!outFile)
+    {
+        cout << "File bad.\n";
+        return;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        outFile << patients[i].id << " "
+                << patients[i].name << " "
+                << patients[i].age << " "
+                << patients[i].gender << " "
+                << patients[i].diagnosis << endl;
+    }
+
+    outFile.close();
+    cout << "Saved.\n";
+}
+
+// load file
+void loadPatientsFromFile(Patient* patients, int& count)
+{
+    ifstream inFile("patients.txt");
+
+    if (!inFile)
+    {
+        return;
+    }
+
+    count = 0;
+
+    while (inFile >> patients[count].id
+                  >> patients[count].name
+                  >> patients[count].age
+                  >> patients[count].gender
+                  >> patients[count].diagnosis)
+    {
+        count++;
+
+        if (count >= MAX)
+        {
+            break;
+        }
+    }
+
+    inFile.close();
+
+    sortPatients(patients, count);
+}
+
+// menu
+void showMenu()
+{
+    cout << "\nHospital Patient System\n";
+    cout << "1. Add Patient\n";
+    cout << "2. Display Patients\n";
+    cout << "3. Search Patient\n";
+    cout << "4. Update Patient\n";
+    cout << "5. Save Patients\n";
+    cout << "6. Exit\n";
+    cout << "Choice: ";
+}
+
+int main()
+{
+    Patient* patients = new Patient[MAX];
+    int count = 0;
+    int choice = 0;
+
+    loadPatientsFromFile(patients, count);
+
+    showMenu();
+    cin >> choice;
+
+    while (choice != 6)
+    {
+        if (choice == 1)
+        {
+            addPatient(patients, count);
+        }
+        else if (choice == 2)
+        {
+            displayPatients(patients, count);
+        }
+        else if (choice == 3)
+        {
+            searchPatient(patients, count);
+        }
+        else if (choice == 4)
+        {
+            updatePatient(patients, count);
+        }
+        else if (choice == 5)
+        {
+            savePatientsToFile(patients, count);
+        }
+        else
+        {
+            cout << "Bad choice.\n";
+        }
+
+        showMenu();
+        cin >> choice;
+    }
+
+    savePatientsToFile(patients, count);
+    cout << "Good Bye!\n";
+
+    delete[] patients;
+    return 0;
+}
