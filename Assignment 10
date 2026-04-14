@@ -1,0 +1,44 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class VendingItem
+{
+private:
+    int id;
+    string name;
+    double price;
+
+public:
+    VendingItem(int i, string n, double p)
+    {
+        id = i;
+        name = n;
+        price = p;
+        cout << "Constructor called." << endl;
+    }
+
+    ~VendingItem()
+    {
+        cout << "Destructor called. alignment achieved...?" << endl;
+    }
+
+    void printDetails()
+    {
+        cout << "ID: " << id << endl;
+        cout << "Name: " << name << endl;
+        cout << "Price: $" << price << endl;
+        cout << endl;
+    }
+};
+
+int main()
+{
+    VendingItem item1(1, "Chips", 2.50);
+    VendingItem item2(2, "Soda", 1.75);
+
+    item1.printDetails();
+    item2.printDetails();
+
+    return 0;
+}
